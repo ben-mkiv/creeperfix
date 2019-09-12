@@ -1,66 +1,93 @@
 package ben_mkiv.creeperfix;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.monster.CreeperEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.ArrayList;
 
-@Mod.EventBusSubscriber(modid = CreeperFix.MOD_ID)
-@Mod(value = CreeperFix.MOD_ID)
+@Mod(
+        modid = CreeperFix.MOD_ID,
+        name = CreeperFix.MOD_NAME,
+        version = CreeperFix.VERSION
+)
 public class CreeperFix {
 
     public static final String MOD_ID = "creeperfix";
     public static final String MOD_NAME = "CreeperFix";
     public static final String VERSION = "1.1";
 
+    public static boolean ProtectBlocks = true;
+    public static boolean ProtectItems = true;
+    public static boolean ProtectPlayers = false;
+    public static boolean ProtectAnimals = true;
+    public static boolean ProtectMobs = false;
 
-    public CreeperFix(){
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.spec);
+
+    @Mod.Instance(MOD_ID)
+    public static CreeperFix INSTANCE;
+
+    @Mod.EventHandler
+    public void preinit(FMLPreInitializationEvent event) {
+        Config.preInit();
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 
-    @SubscribeEvent(priority= EventPriority.HIGHEST)
-    public static void onDetonate(ExplosionEvent.Detonate event) {
-        if(!(event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity))
-            return;
+    @Mod.EventHandler
+    public void postinit(FMLPostInitializationEvent event) {
+        ProtectBlocks = Config.getConfig().getCategory("general").get("protectblocks").getBoolean();
+        ProtectItems = Config.getConfig().getCategory("general").get("protectitems").getBoolean();
+        ProtectPlayers = Config.getConfig().getCategory("general").get("protectplayers").getBoolean();
+        ProtectAnimals = Config.getConfig().getCategory("general").get("protectanimals").getBoolean();
+        ProtectMobs = Config.getConfig().getCategory("general").get("protectmobs").getBoolean();
+    }
 
-        if(Config.GENERAL.ProtectBlocks.get())
-            event.getAffectedBlocks().clear();
+    static class EventHandler {
+        @SubscribeEvent(priority = EventPriority.HIGHEST)
+        public void onDetonate(ExplosionEvent.Detonate event) {
+            if (!(event.getExplosion().getExplosivePlacedBy() instanceof EntityCreeper))
+                return;
 
-        ArrayList<Entity> protectedEntities = new ArrayList<>();
+            if (ProtectBlocks)
+                event.getAffectedBlocks().clear();
 
-        for (Entity entity : event.getAffectedEntities()) {
-            if (Config.GENERAL.ProtectItems.get() && entity instanceof ItemEntity) {
-                protectedEntities.add(entity);
-                continue;
-            }
+            ArrayList<Entity> protectedEntities = new ArrayList<>();
 
-            if (Config.GENERAL.ProtectPlayers.get() && entity instanceof PlayerEntity) {
-                protectedEntities.add(entity);
-                continue;
-            }
-
-            if(entity instanceof MobEntity){
-                if(Config.GENERAL.ProtectAnimals.get() && entity.getType().getClassification().getPeacefulCreature()){
+            for (Entity entity : event.getAffectedEntities()) {
+                if (ProtectItems && entity instanceof EntityItem) {
                     protectedEntities.add(entity);
                     continue;
                 }
 
-                if(Config.GENERAL.ProtectMobs.get() && !entity.getType().getClassification().getPeacefulCreature()) {
+                if (ProtectPlayers && entity instanceof EntityPlayer) {
                     protectedEntities.add(entity);
+                    continue;
+                }
+
+                if (entity instanceof EntityMob) {
+                    if (ProtectAnimals && !entity.isCreatureType(EnumCreatureType.MONSTER, false)) {
+                        protectedEntities.add(entity);
+                        continue;
+                    }
+
+                    if (ProtectMobs && entity.isCreatureType(EnumCreatureType.MONSTER, false)) {
+                        protectedEntities.add(entity);
+                    }
                 }
             }
-        }
 
-        event.getAffectedEntities().removeAll(protectedEntities);
+            event.getAffectedEntities().removeAll(protectedEntities);
+        }
     }
 
 }

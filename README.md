@@ -1,2 +1,0 @@
-# CreeperFix
-Minecraft Mod
