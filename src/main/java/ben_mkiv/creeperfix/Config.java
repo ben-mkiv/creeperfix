@@ -52,7 +52,7 @@ public class Config extends PermissionAPI {
         protectAnimals.setLanguageKey("gui.config.general.protectanimals");
         protectAnimals.setComment("Protect Animals");
 
-        Property protectMobs = config.get("general", "protectmobs", true);
+        Property protectMobs = config.get("general", "protectmobs", false);
         protectMobs.setLanguageKey("gui.config.general.protectmobs");
         protectMobs.setComment("Protect hostile mobs");
 
