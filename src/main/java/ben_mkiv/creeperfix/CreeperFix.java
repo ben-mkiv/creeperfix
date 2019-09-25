@@ -3,6 +3,8 @@ package ben_mkiv.creeperfix;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +27,7 @@ public class CreeperFix {
 
     public static final String MOD_ID = "creeperfix";
     public static final String MOD_NAME = "CreeperFix";
-    public static final String VERSION = "1.1";
+    public static final String VERSION = "1.2";
 
     public static boolean ProtectBlocks = true;
     public static boolean ProtectItems = true;
@@ -64,6 +66,13 @@ public class CreeperFix {
             ArrayList<Entity> protectedEntities = new ArrayList<>();
 
             for (Entity entity : event.getAffectedEntities()) {
+                if(ProtectBlocks){
+                    if(entity instanceof EntityItemFrame || entity instanceof EntityPainting){
+                        protectedEntities.add(entity);
+                        continue;
+                    }
+                }
+
                 if (ProtectItems && entity instanceof EntityItem) {
                     protectedEntities.add(entity);
                     continue;
