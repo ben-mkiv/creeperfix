@@ -3,6 +3,8 @@ package ben_mkiv.creeperfix;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.entity.item.PaintingEntity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -38,6 +40,13 @@ public class CreeperFix {
         ArrayList<Entity> protectedEntities = new ArrayList<>();
 
         for (Entity entity : event.getAffectedEntities()) {
+            if(Config.GENERAL.ProtectBlocks.get()){
+                if(entity instanceof ItemFrameEntity || entity instanceof PaintingEntity){
+                    protectedEntities.add(entity);
+                    continue;
+                }
+            }
+
             if (Config.GENERAL.ProtectItems.get() && entity instanceof ItemEntity) {
                 protectedEntities.add(entity);
                 continue;
