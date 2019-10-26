@@ -1,12 +1,12 @@
 package ben_mkiv.creeperfix;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -66,24 +66,19 @@ public class CreeperFix {
             ArrayList<Entity> protectedEntities = new ArrayList<>();
 
             for (Entity entity : event.getAffectedEntities()) {
-                if(ProtectBlocks){
-                    if(entity instanceof EntityItemFrame || entity instanceof EntityPainting){
+                if(entity instanceof EntityItemFrame || entity instanceof EntityPainting) {
+                    if (ProtectBlocks)
                         protectedEntities.add(entity);
-                        continue;
-                    }
                 }
-
-                if (ProtectItems && entity instanceof EntityItem) {
-                    protectedEntities.add(entity);
-                    continue;
+                else if(entity instanceof EntityItem) {
+                    if (ProtectItems)
+                        protectedEntities.add(entity);
                 }
-
-                if (ProtectPlayers && entity instanceof EntityPlayer) {
-                    protectedEntities.add(entity);
-                    continue;
+                else if(entity instanceof EntityPlayer) {
+                    if (ProtectPlayers)
+                        protectedEntities.add(entity);
                 }
-
-                if (entity instanceof EntityMob) {
+                else if (entity instanceof EntityLivingBase) {
                     if (ProtectAnimals && !entity.isCreatureType(EnumCreatureType.MONSTER, false)) {
                         protectedEntities.add(entity);
                         continue;
