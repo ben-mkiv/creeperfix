@@ -1,7 +1,7 @@
 package ben_mkiv.creeperfix;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.item.PaintingEntity;
@@ -40,24 +40,20 @@ public class CreeperFix {
         ArrayList<Entity> protectedEntities = new ArrayList<>();
 
         for (Entity entity : event.getAffectedEntities()) {
-            if(Config.GENERAL.ProtectBlocks.get()){
-                if(entity instanceof ItemFrameEntity || entity instanceof PaintingEntity){
+
+            if(entity instanceof ItemFrameEntity || entity instanceof PaintingEntity) {
+                if (Config.GENERAL.ProtectBlocks.get())
                     protectedEntities.add(entity);
-                    continue;
-                }
             }
-
-            if (Config.GENERAL.ProtectItems.get() && entity instanceof ItemEntity) {
-                protectedEntities.add(entity);
-                continue;
+            else if(entity instanceof ItemEntity){
+                if (Config.GENERAL.ProtectItems.get())
+                    protectedEntities.add(entity);
             }
-
-            if (Config.GENERAL.ProtectPlayers.get() && entity instanceof PlayerEntity) {
-                protectedEntities.add(entity);
-                continue;
+            else if(entity instanceof PlayerEntity) {
+                if (Config.GENERAL.ProtectPlayers.get())
+                    protectedEntities.add(entity);
             }
-
-            if(entity instanceof MobEntity){
+            else if(entity instanceof LivingEntity){
                 if(Config.GENERAL.ProtectAnimals.get() && entity.getType().getClassification().getPeacefulCreature()){
                     protectedEntities.add(entity);
                     continue;
