@@ -22,7 +22,7 @@ public class CreeperFix {
 
     public static final String MOD_ID = "creeperfix";
     public static final String MOD_NAME = "CreeperFix";
-    public static final String VERSION = "1.1";
+    public static final String VERSION = "1.3";
 
 
     public CreeperFix(){
