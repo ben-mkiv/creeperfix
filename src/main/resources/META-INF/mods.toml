@@ -1,10 +1,11 @@
 modLoader="javafml" #mandatory
-loaderVersion="[24,)" #mandatory (24 is current forge version)
+loaderVersion="[34,)" #mandatory (24 is current forge version)
 issueTrackerURL="http://github.com/ben_mkiv/creeperfix/issues" #optional
 displayURL="https://minecraft.curseforge.com/projects/creeperfix" #optional
 #logoFile="creeperfix.png" #optional
 credits="ben_mkiv (code), luni (for the inspiration to create this mod)" #optional
 authors="ben_mkiv" #optional
+license="huh?"
 [[mods]] #mandatory
 modId="creeperfix" #mandatory
 version="${file.jarVersion}" #mandatory
